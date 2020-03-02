@@ -2,7 +2,7 @@
 jdbc driver for parsing jsno/xml files direclty to database. 
 
 ## Building
-mvn clean install
+mvn clean install  
 mvn package
 
 ## Quick Start in DBeaver
