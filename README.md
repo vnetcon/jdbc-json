@@ -1,7 +1,11 @@
 # jdbc-json
 jdbc driver for parsing jsno/xml files direclty to database. 
 
-# Quick Start in DBeaver
+## Building
+mvn clean install
+mvn package
+
+## Quick Start in DBeaver
 
 1. Create a connecton using jdbc-json driver.
 2. Add the actual driver (e.g. postgresql driver) into driver managers libraries in same connection
