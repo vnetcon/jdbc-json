@@ -13,8 +13,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import com.vnetcon.jdbc.rest.RestDriver;
-
 
 public class JsonDriver implements Driver {
 
