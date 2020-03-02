@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 public class JsonDriver implements Driver {
 
+	
 	private static Driver registeredDriver;
 	
 	private static final String dbConf = "/etc/vnetcon/database.properties";
