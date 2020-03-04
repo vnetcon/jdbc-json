@@ -1,5 +1,7 @@
 # jdbc-json
-jdbc driver for parsing jsno/xml files direclty to database. 
+jdbc driver for parsing jsno/xml files direclty to database.  
+  
+At the moment this is not yet added to dev-env.zip. This will be done soon.
 
 ## Quick Start (for windows 64bit)
 For setting up the development environment you don't need install anything. 
