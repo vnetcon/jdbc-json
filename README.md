@@ -3,7 +3,7 @@ jdbc driver for parsing jsno/xml files direclty to database.
   
 At the moment this is not yet added to dev-env.zip. This will be done soon.
 
-## Quick Start (for windows 64bit) - currently broken, will be fixed soon
+## Quick Start (for windows 64bit) - updated 05/03/2020 (dd/mm/yyyy)
 For setting up the development environment you don't need install anything. 
 You just download the zip file and start the downloaded software with following steps:  
 
