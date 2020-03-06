@@ -40,7 +40,7 @@ Below is a screenshot of the fincoice_utf8.xml file that have been extracted to 
 In this picture the generated tables are on the left side (tablelist) and on main view you can see ER diagram generetad by DBeaver.
 All the relatios between tables are genereted automcatcally during the table generation...
 
-![jdbc-rest-dbeaver](http://vnetcon.s3-website-eu-west-1.amazonaws.com/img/jdbc-json-dbeaver.png)
+![jdbc-json-dbeaver](http://vnetcon.s3-website-eu-west-1.amazonaws.com/img/jdbc-json-dbeaver.png)
 
 
 
