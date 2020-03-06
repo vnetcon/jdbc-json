@@ -1,9 +1,9 @@
 # jdbc-json
 jdbc driver for parsing jsno/xml files direclty to database.  
-**This driver is a part of our bigger picture of self hosted vendor independed BigData processing based on Apache Drill.**  
+**This driver is a part of our bigger picture of self hosted vendor independed BigData processing based on Apache Drill. Apache drill have both JDBC and ODBC drivers and can be used with common reporting tools like Tableua, Qlik etc.**  
   
 For this setup we have create a development environment that don't require any installations and help people to evaluate the 
-technologies immediately. The setup contains following elements
+technologies immediately. The setup contains following elements 
 
 * Local Apache Drill for testing immediately
 * Local Postgresql for used by other software
