@@ -1,4 +1,4 @@
-package com.vnetcon.jdbc;
+package com.vnetcon.jdbc.json;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,7 +78,7 @@ public class JsonDriver implements Driver {
 		try {
 			String tmp  = url;
 			tmp = tmp.replaceFirst(urlPrefix, "");
-			String p[] = tmp.split("?");
+			String p[] = tmp.split("\\?");
 			p = p[1].split("&");
 			for(int i = 0; i < p.length; i++) {
 				String pp[] = p[i].split("=");
@@ -98,6 +98,16 @@ public class JsonDriver implements Driver {
 	
 	private Connection jsonConnect(String url, Properties info) throws SQLException {
 		String dbConfig = this.getDatabaseConfigString(url);
+		
+//		if(((Properties)dbProps.get(dbConfig)).getProperty(dbConfig + ".jdbc.driver") != null) {
+		if(dbProps.getProperty(dbConfig + ".jdbc.driver") != null) {
+			try {
+				Class.forName(dbProps.getProperty(dbConfig + ".jdbc.driver"));
+			} catch (ClassNotFoundException e) {
+				throw new SQLException(e);
+			}
+		}
+		
 		Json2DBConverter conv = new Json2DBConverter(dbConfig, dbProps);
 		Map<String, String> params = this.getUrlParams(url);
 		String jdbcUrl = dbProps.getProperty(dbConfig + ".jdbc.url");
@@ -109,13 +119,18 @@ public class JsonDriver implements Driver {
 		String httpPass = params.get("httppass");
 		String httpFile = params.get("httpfile");
 		String dbschema = params.get("dbschema");
+		String genfkc = params.get("genfkc");
 		String curlUser = null;
+		
 		
 		targetCon = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcPass);
 		targetURL = targetCon.getMetaData().getURL();
 		targetDriver = DriverManager.getDriver(targetURL);
-		
+
 		conv.setConnection(targetCon);
+		if(genfkc != null && genfkc.equals("true")) {
+			conv.setGenerateForeignKeyConstraints(true);
+		}
 		
 		if(fileEncoding == null) {
 			fileEncoding = "UTF-8";
@@ -143,8 +158,10 @@ public class JsonDriver implements Driver {
 	public Connection connect(String url, Properties info) throws SQLException {
 		
 		try {
+			System.out.println("connect: " + url);
 			if(url != null && url.startsWith(urlPrefix)) {
 				this.loadProperties();
+				System.out.println("properties load");
 				return jsonConnect(url, info);
 			}
 		}catch(Exception e) {
@@ -186,4 +203,13 @@ public class JsonDriver implements Driver {
 		return targetDriver.getParentLogger();
 	}
 
+	public static void main(String[] args) {
+		try {
+			Connection con = DriverManager.getConnection("jdbc:vnetcon:json://default?url=C:\\vnetcon\\dev-env\\example-data&dbschema=finvoice", null, null);
+			con.close();
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }
