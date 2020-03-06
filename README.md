@@ -1,5 +1,6 @@
 # jdbc-json
 jdbc driver for parsing jsno/xml files direclty to database.  
+This driver is a part of our bigger picture of local vendor independed BigData based on Apache Drill.  
   
 At the moment this is not yet added to dev-env.zip. This will be done soon.
 
