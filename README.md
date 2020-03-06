@@ -7,7 +7,7 @@ technologies immediately. The setup contains following elements
 
 * Local Apache Drill for testing immediately
 * Local Postgresql for used by other software
-* Local Tomcat8 + REST API Server for tsting the sql based rest api
+* Local Tomcat8 + REST API Server for testing the sql based rest api immediately
 * Pre installed jdcb-json driver for testing the automatic JSON/XML parsing to postgresql database
 * Preconfigured DBeaver to execute the tests immediately
 
