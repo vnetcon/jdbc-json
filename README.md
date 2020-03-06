@@ -12,7 +12,7 @@ technologies immediately. The setup contains following elements
 * Preconfigured DBeaver to execute the tests immediately
 
 
-## Quick Start (for windows 64bit) - updated 05/03/2020 (dd/mm/yyyy)
+## Quick Start (for windows 64bit) - updated 06/03/2020 (dd/mm/yyyy)
 For setting up the development environment you don't need install anything. 
 You just download the zip file and start the downloaded software with following steps:  
 
