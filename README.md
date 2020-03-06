@@ -39,11 +39,13 @@ The DBeaver has ready configured setting for creating and executing sql statemen
 ## Suported databases
 In theory all databases that have JDBC driver. Postgresql, Oracle, SQL Server etc.
 
-## jdbc url 
-The key for understanding the jdbc url format is to keep in mind, that the /etc/vnetcon/database.properties file is the 
+#he key for understanding the jdbc url format is to keep in mind, that the /etc/vnetcon/database.properties file is the 
 start point for creating connection. Example from following url
   
+```
 jdbc:vnetcon:json://default?url=C:\vnetcon\dev-env\example-data&dbschema=finvoice
+```
+
   
 the "default" is the "prefix" in configuration parameters in database.properties files.
   
