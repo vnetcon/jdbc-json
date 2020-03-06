@@ -2,7 +2,15 @@
 jdbc driver for parsing jsno/xml files direclty to database.  
 **This driver is a part of our bigger picture of self hosted vendor independed BigData processing based on Apache Drill.**  
   
-At the moment this is not yet added to dev-env.zip. This will be done soon.
+For this setup we have create a development environment that don't require any installations and help people to evaluate the 
+technologies immediately. The setup contains following elements
+
+* Local Apache Drill for testing immediately
+* Local Postgresql for used by other software
+* Local Tomcat8 + REST API Server for tsting the sql based rest api
+* Pre installed jdcb-json driver for testing the automatic JSON/XML parsing to postgresql database
+* Preconfigured DBeaver to execute the tests immediately
+
 
 ## Quick Start (for windows 64bit) - updated 05/03/2020 (dd/mm/yyyy)
 For setting up the development environment you don't need install anything. 
