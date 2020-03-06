@@ -34,10 +34,30 @@ The DBeaver has ready configured setting for creating and executing sql statemen
 1. Clone the repo and move to the folder where pom.xml exists
 2. execute: mvn clean isntall
 3. execute: mvn package  
-4. Use the *-with-dependencies.jar" as your jdbc driver
+4. Use the *-with-dependencies.jar" as your jdbc drivere
 
 ## Suported databases
 In theory all databases that have JDBC driver. Postgresql, Oracle, SQL Server etc.
+
+## jdbc url 
+The key for understanding the jdbc url format is to keep in mind, that the /etc/vnetcon/database.properties file is the 
+start point for creating connection. Example from following url
+  
+jdbc:vnetcon:json://default?url=C:\vnetcon\dev-env\example-data&dbschema=finvoice
+  
+the "default" is the "prefix" in configuration parameters in database.properties files.
+  
+The jdbc-json url can have follosing parameters
+
+* url: thf folder that contains \*.xml and/or \*.json files to parse or http(s) url for rest service that return xml or json
+* dbschema: into what schema the tables should be created
+* encoding: what encoding the files are
+* httpuser: rest service user (basic authentication)
+* httppass: rest service password (basic authentication)
+* httpfile: the temporary file the http request should be stored (files are loaded actually by curl)
+* genfkc: Should the jdbc-rest driver create foreign key konstraints (default false)
+
+
 
 ## Commercial use
 If you want to use this in closed code project or product you can buy a 99 USD license [here](https://vnetcon.com)  
