@@ -4,8 +4,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -113,6 +116,16 @@ public class Json2DBConverter {
 		con = extcon;
 	}
 	
+	private String bytesToHex(byte[] hash) {
+	    StringBuffer hexString = new StringBuffer();
+	    for (int i = 0; i < hash.length; i++) {
+	    String hex = Integer.toHexString(0xff & hash[i]);
+	    if(hex.length() == 1) hexString.append('0');
+	        hexString.append(hex);
+	    }
+	    return hexString.toString();
+	}	
+	
 	public void addFGConstrqaints() throws SQLException {
 		try {
 			Statement stmt = con.createStatement();
@@ -131,7 +144,51 @@ public class Json2DBConverter {
 		}
 	}
 	
-    private String readLines(File fileName, String encoding) throws Exception {
+	private boolean fileLoaded(String schema, String fileName, String signature) throws Exception {
+		boolean bRet = false;
+		String sql = "SELECT COUNT(*) FROM \"" + schema + "\".\"FILEREAD_LOG\" "
+		+ "WHERE \"FILENAME\" = ? AND \"SIGNATURE\" = ?";
+		
+		PreparedStatement pstmt = con.prepareStatement(sql);
+		pstmt.setString(1, fileName);
+		pstmt.setString(2, signature);
+		ResultSet rs = pstmt.executeQuery();
+		if(rs.next()) {
+			if(rs.getInt(1) > 0) {
+				bRet = true;
+			}
+		}
+		rs.close();
+		pstmt.close();
+		return bRet;
+	}
+	
+	private void updateFileLog(String schema, String fileName, String signature) throws Exception {
+		String isql = "INSERT INTO \"" + schema + "\".\"FILEREAD_LOG\" "
+		+ "(\"FILENAME\", \"SIGNATURE\") VALUES (?, ?)";
+		String usql = "UPDATE \"" + schema + "\".\"FILEREAD_LOG\" "
+		+ "SET \"SIGNATURE\" = ? WHERE \"FILENAME\" = ?";
+		
+		
+		PreparedStatement pstmt = con.prepareStatement(usql);
+		pstmt.setString(1, signature);
+		pstmt.setString(2, fileName);
+		int uCount = pstmt.executeUpdate();
+		
+		if(uCount == 0) {
+			pstmt.close();
+			pstmt = con.prepareStatement(isql);
+			pstmt.setString(1, fileName);
+			pstmt.setString(2, signature);
+			pstmt.executeUpdate();
+		}
+		
+		pstmt.close();
+	}
+
+	
+    private String readLines(String schema, File fileName, String encoding) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
         StringBuilder sb = new StringBuilder();
         FileInputStream fIn = new FileInputStream(fileName);
         InputStreamReader isrIn = new InputStreamReader(fIn, encoding);
@@ -143,9 +200,28 @@ public class Json2DBConverter {
         }
  
         fIn.close();
+        
+        byte[] encodedhash = digest.digest(sb.toString().getBytes(StandardCharsets.UTF_8));
+        String signature = this.bytesToHex(encodedhash);
+        
+        if(fileLoaded(schema, fileName.getAbsolutePath(), signature)) {
+        	return "";
+        }
+        //TODO: this should be moved after successful insert - now bit too early
+        this.updateFileLog(schema, fileName.getAbsolutePath(), signature);
         return sb.toString();
     }	
 
+    private void createFileReadLogTable(String schema) throws SQLException {
+    	StringBuilder sql = new StringBuilder();
+    	sql.append("CREATE TABLE IF NOT EXISTS \"" + schema + "\".\"FILEREAD_LOG\" (");
+		sql.append("\"FILENAME\" " + dbConf.getProperty(dbConfig + ".json.longtexttype") + " NOT NULL PRIMARY KEY");
+		sql.append(", \"SIGNATURE\" " + dbConf.getProperty(dbConfig + ".json.longtexttype") + " ");
+    	sql.append(")");
+    	Statement stmt = con.createStatement();
+    	stmt.execute(sql.toString());
+    	stmt.close();
+    }
     
     private void createTable(String prefix, String table, Map<String, String> cols, String schema) throws Exception {
     	StringBuilder sql = new StringBuilder();
@@ -363,6 +439,11 @@ public class Json2DBConverter {
     
     
     private void writeJsonString2DB(String json, String schema, String filename) throws Exception {
+    	
+    	if("".equals(json)) {
+    		return;
+    	}
+    	
     	Map<String, String> cols = new LinkedHashMap<String, String>();
 		JsonElement je = gp.parse(json);
 		JsonObject jo = je.getAsJsonObject();
@@ -402,19 +483,19 @@ public class Json2DBConverter {
 	}
 	
     private void writeJSON2DB(File filename, String encoding, String schema) throws Exception {
-		String json = readLines(filename, encoding);
+		String json = readLines(schema, filename, encoding);
 		writeJsonString2DB(json, schema, filename.getName());
     }
     
 	private void writeXML2DB(File fileName, String encoding, String schema) throws Exception {
-		String xml = readLines(fileName, encoding);
+		String xml = readLines(schema, fileName, encoding);
 		JSONObject jo = XML.toJSONObject(xml);
 		String json = jo.toString();
 		writeJsonString2DB(json, schema, fileName.getName());
 	}
 	
 	public void parseFile(File fileName, String encoding, String schema) throws Exception {
-		
+		createFileReadLogTable(schema);
 		if(fileName.getName().toLowerCase().endsWith(".xml")) {
 			writeXML2DB(fileName, encoding, schema);
 		} else {
