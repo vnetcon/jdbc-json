@@ -113,6 +113,8 @@ public class JsonDriver implements Driver {
 		String jdbcUrl = dbProps.getProperty(dbConfig + ".jdbc.url");
 		String jdbcUser = dbProps.getProperty(dbConfig + ".jdbc.user");
 		String jdbcPass = dbProps.getProperty(dbConfig + ".jdbc.pass");
+		String fgsql = dbProps.getProperty(dbConfig + ".json.addforeignkey");
+		String fgdropsql = dbProps.getProperty(dbConfig + ".json.dropforeignkey");
 		String fileEncoding = params.get("encoding");
 		String fileUrl = params.get("url");
 		String httpUser = params.get("httpuser");
@@ -120,6 +122,7 @@ public class JsonDriver implements Driver {
 		String httpFile = params.get("httpfile");
 		String dbschema = params.get("dbschema");
 		String genfkc = params.get("genfkc");
+		String fglast = params.get("fglast");
 		String curlUser = null;
 		
 		
@@ -128,8 +131,16 @@ public class JsonDriver implements Driver {
 		targetDriver = DriverManager.getDriver(targetURL);
 
 		conv.setConnection(targetCon);
+		
+		conv.setFGStatementSQL(fgsql);
+		conv.setFGSDroptatementSQL(fgdropsql);
+		
 		if(genfkc != null && genfkc.equals("true")) {
 			conv.setGenerateForeignKeyConstraints(true);
+		}
+
+		if(fglast != null && fglast.equals("true")) {
+			conv.setFGConstraintsLast(true);
 		}
 		
 		if(fileEncoding == null) {
@@ -152,16 +163,15 @@ public class JsonDriver implements Driver {
 		} catch (Exception e) {
 			throw new SQLException(e);
 		}
+		conv.addFGConstrqaints();
 		return targetCon;
 	}
 	
 	public Connection connect(String url, Properties info) throws SQLException {
 		
 		try {
-			System.out.println("connect: " + url);
 			if(url != null && url.startsWith(urlPrefix)) {
 				this.loadProperties();
-				System.out.println("properties load");
 				return jsonConnect(url, info);
 			}
 		}catch(Exception e) {
